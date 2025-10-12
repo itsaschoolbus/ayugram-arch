@@ -73,6 +73,22 @@ jobs:
             pacman -Scc --noconfirm
           '
 
+      - name: Update repo
+        if: ${{ env.CONTINUE_BUILD != 'false' }}
+        run: |
+          git clone https://github.com/itsaschoolbus/ayugram-arch.git repo
+          cd repo
+          git remote set-url origin "https://itsaschoolbus:${{ secrets.GITHUB_TOKEN }}@github.com/itsaschoolbus/ayugram-arch.git"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm *
+          cp ../pkg/* .
+          rm *debug*
+          repo-add ayugram.db.tar.gz *zst
+          git add .
+          git commit -m "ayugram-desktop ${{ env.AUR_VERSION }}"
+          git push
+
       - name: Upload to releases
         uses: softprops/action-gh-release@v2.3.4
         if: ${{ env.CONTINUE_BUILD != 'false' }}
