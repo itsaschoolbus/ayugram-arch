@@ -24,7 +24,7 @@ jobs:
           echo "AUR_VERSION=$AUR_VER" >> $GITHUB_ENV
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
-          if [ "$LATEST_TAG" = "v$AUR_VER" ]; then
+          if [ "$LATEST_TAG" = "v$AUR_VER" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
             echo "CONTINUE_BUILD=false" >> $GITHUB_ENV
           fi
 
