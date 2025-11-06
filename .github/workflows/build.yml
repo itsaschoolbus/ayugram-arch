@@ -61,35 +61,22 @@ jobs:
 
             sudo -u builder bash -c "
               git config --global http.sslBackend "openssl"
-              cd ~
-              git clone https://aur.archlinux.org/ayugram-desktop.git
-              cd ayugram-desktop
-              sed -i 's/d73dfc4e16edb22c6060d6672d72006a30c9fa3032670a49fa703528166ddcfa/SKIP/g' PKGBUILD
-              makepkg -s --noconfirm
+              cd ~ && git clone https://aur.archlinux.org/ayugram-desktop.git
+              cd ayugram-desktop && makepkg -s --noconfirm
             "
 
             mkdir -p /share/pkg
-            cp /home/builder/ayugram-desktop/*.pkg.tar.* /share/pkg/
-            rm /share/pkg/*debug*
+            cp /home/builder/ayugram-desktop/*.pkg.tar.* /share/pkg/ && rm /share/pkg/*debug*
+            cd ~ && git clone https://github.com/itsaschoolbus/ayugram-arch.git repo && cd repo
+            git remote set-url origin "https://itsaschoolbus:${{ secrets.GITHUB_TOKEN }}@github.com/itsaschoolbus/ayugram-arch.git"
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            rm *ayugram* && cp /share/pkg/* . && repo-add ayugram.db.tar.gz *zst
+            git add . && git commit -m "ayugram-desktop ${{ env.AUR_VERSION }}" && git push
           '
 
-      - name: Update repo
-        if: ${{ env.CONTINUE_BUILD != 'false' }}
-        run: |
-          git clone https://github.com/itsaschoolbus/ayugram-arch.git repo
-          cd repo
-          git remote set-url origin "https://itsaschoolbus:${{ secrets.GITHUB_TOKEN }}@github.com/itsaschoolbus/ayugram-arch.git"
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          rm *ayugram*
-          cp ../pkg/* .
-          repo-add ayugram.db.tar.gz *zst
-          git add .
-          git commit -m "ayugram-desktop ${{ env.AUR_VERSION }}"
-          git push
-
       - name: Upload to releases
-        uses: softprops/action-gh-release@v2.3.4
+        uses: softprops/action-gh-release@master
         if: ${{ env.CONTINUE_BUILD != 'false' }}
         with:
           files: pkg/*.pkg.tar.*
