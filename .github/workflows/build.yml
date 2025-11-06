@@ -17,11 +17,10 @@ jobs:
         run: |
           AUR_URL="https://aur.archlinux.org/rpc/?v=5&type=info&arg=ayugram-desktop"
           AUR_VER=$(curl -s "$AUR_URL" | jq -r ".results[0].Version")
-
           LATEST_TAG=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
-
           if [ "$LATEST_TAG" = "v$AUR_VER" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
             echo "CONTINUE_BUILD=false" >> $GITHUB_ENV
+          else
             echo "AUR_VERSION=$AUR_VER" >> $GITHUB_ENV
             echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
           fi
