@@ -53,6 +53,7 @@ jobs:
             yes | pacman -Scc
 
             useradd -m builder && echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
+            sed -i '/^OPTIONS=/ s/\bdebug\b/!debug/' /etc/makepkg.conf
 
             sudo -u builder bash -c "
               git config --global http.sslBackend "openssl"
@@ -61,7 +62,7 @@ jobs:
             "
 
             mkdir -p /share/pkg
-            cp /home/builder/ayugram-desktop/*.pkg.tar.* /share/pkg/ && rm /share/pkg/*debug*
+            cp /home/builder/ayugram-desktop/*.pkg.tar.* /share/pkg/
             cd ~ && git clone https://github.com/itsaschoolbus/ayugram-arch.git repo && cd repo
             git remote set-url origin "https://itsaschoolbus:${{ secrets.GITHUB_TOKEN }}@github.com/itsaschoolbus/ayugram-arch.git"
             git config --global user.name "github-actions[bot]"
