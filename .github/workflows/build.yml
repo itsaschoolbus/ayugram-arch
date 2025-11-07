@@ -72,7 +72,7 @@ jobs:
             git config --global user.name "github-actions[bot]"
             git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
             rm *ayugram* && cp /share/pkg/* . && repo-add ayugram.db.tar.gz *zst
-            git add . && git commit -m "ayugram-desktop ${{ env.AUR_VERSION }}" && git push
+            git add . && git commit -m 'ayugram-desktop ${{ env.AUR_VERSION }}' && git push
           "
 
       - name: Upload to releases
