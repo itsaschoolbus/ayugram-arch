@@ -5,7 +5,7 @@ You can use it by adding this to `pacman.conf`:
 ```
 [ayugram]
 SigLevel = Never
-Server = https://itsaschoolbus.github.io/$repo-arch
+Server = https://ayu.itsnhu.qzz.io
 ```
 
 Inspired by the [materialgram repo](https://github.com/materialgram/arch).
