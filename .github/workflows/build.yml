@@ -24,8 +24,15 @@ jobs:
 
       - name: Check latest tag
         run: |
-          LATEST_TAG=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
+          set -euo pipefail
+          LATEST_TAG=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
+          if [ "$LATEST_TAG" = "null" ] || [ -z "$LATEST_TAG" ]; then
+            echo "failed to fetch latest tag"
+            exit 1
+          fi
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if build should continue
         id: continue_build
