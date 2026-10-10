@@ -1,4 +1,4 @@
-name: Build AyuGram Desktop
+name: Build AyuGram Desktop (Arch)
 
 on:
   workflow_dispatch:
@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Clear old build runs
         run: |
-          IDS=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/build.yml/runs?per_page=100&status=completed" \
+          IDS=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/arch.yml/runs?per_page=100&status=completed" \
             --paginate \
             --jq '.workflow_runs[] | 
                   select(((.updated_at | fromdateiso8601) - (.run_started_at | fromdateiso8601)) < 1800) | 
@@ -82,7 +82,7 @@ jobs:
       - name: Free disk space (2/3)
         uses: jlumbroso/free-disk-space@main
         with:
-          tool-cache: true
+          preinstalled-runtimes: true
 
       - name: Free disk space (3/3)
         uses: rokibhasansagar/slimhub_actions@main
@@ -109,8 +109,8 @@ jobs:
 
             mkdir -p /share/pkg
             cp /home/builder/ayugram-desktop/*.pkg.tar.* /share/pkg/
-            cd ~ && git clone https://github.com/itsaschoolbus/ayugram-arch.git repo && cd repo
-            git remote set-url origin 'https://itsaschoolbus:${{ secrets.GITHUB_TOKEN }}@github.com/itsaschoolbus/ayugram-arch.git'
+            cd ~ && git clone https://github.com/${{ github.repository }}.git repo && cd repo
+            git remote set-url origin 'https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git'
             git config --global user.name 'github-actions[bot]' && git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
             rm *ayugram* && cp /share/pkg/* . && repo-add ayugram.db.tar.gz *zst
             git add . && git commit -m 'ayugram-desktop ${{ env.AUR_VER }}' && git push
