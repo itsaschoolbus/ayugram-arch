@@ -102,6 +102,14 @@ jobs:
           VERSION="$(cat out/version)"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
+      - name: Delete existing release
+        run: |
+          sudo apt install gh -y
+          gh release delete fc44 --yes --cleanup-tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
       - name: Upload to releases
         uses: softprops/action-gh-release@master
         with:
@@ -109,7 +117,6 @@ jobs:
           tag_name: fc44
           name: ayugram-desktop-git ${{ steps.pkg.outputs.version }}
           body: "upstream commit: ${{ needs.version.outputs.commit }}"
-          overwrite_files: true
           make_latest: "false"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
